@@ -15,7 +15,6 @@ logging.basicConfig(
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-#list_1 = ('привіт', 'добрий день', 'здоров')
 
 
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -25,13 +24,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f'Шо ти {update.effective_user.first_name}')
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    hello_options = ['привіт', 'добрий день', 'здоров']
+    goodbye_options = ['папа', 'допобачення']
     message = update.message.text.lower()
 
-    if 'привіт' in message:
-        reply_text = f'Привіт {update.effective_user.first_name}!'
 
-    else:
+    reply_text = None
+    for hello_option in hello_options:
+        if hello_option in message:
+            reply_text = f'{hello_option.capitalize()}, {update.effective_user.first_name} {update.effective_user.last_name}!'
+            break
+
+    for goodbye_option in goodbye_options:
+        if goodbye_option in message:
+            last_name = update.effective_user.last_name
+            if last_name is None:
+                reply_text = f'{goodbye_option.capitalize()}, {update.effective_user.first_name}!'
+            else:
+                reply_text = f'{goodbye_option.capitalize()}, {update.effective_user.first_name} {last_name}!'
+            break
+
+    if reply_text is None:
         reply_text = 'Я тебе не розумію'
+
 
     await update.message.reply_text(reply_text)
 
